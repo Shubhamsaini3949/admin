@@ -1,0 +1,168 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class BankAccount {
+    private String accountNumber;
+    private String accountHolder;
+    private double balance;
+
+    public BankAccount(String accountNumber, String accountHolder) {
+        this.accountNumber = accountNumber;
+        this.accountHolder = accountHolder;
+        this.balance = 0.0;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+            System.out.println("New Balance: $" + balance);
+        } else {
+            System.out.println("Invalid deposit amount.");
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            System.out.println("New Balance: $" + balance);
+        } else {
+            System.out.println("Insufficient funds or invalid withdrawal amount.");
+        }
+    }
+
+    public void checkBalance() {
+        System.out.println("Account Balance: $" + balance);
+    }
+}
+
+public class BankingApplication {
+    private static Map<String, BankAccount> accounts = new HashMap<>();
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. Check Balance");
+            System.out.println("5. Exit");
+            System.out.print("Select an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    createAccount(scanner);
+                    break;
+                case 2:
+                    performTransaction(scanner, "deposit");
+                    break;
+                case 3:
+                    performTransaction(scanner, "withdraw");
+                    break;
+                case 4:
+                    checkBalance(scanner);
+                    break;
+                case 5:
+                    System.out.println("Exiting application.");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+
+    private static void createAccount(Scanner scanner) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        System.out.print("Enter account holder's name: ");
+        String accountHolder = scanner.nextLine();
+        BankAccount account = new BankAccount(accountNumber, accountHolder);
+        accounts.put(accountNumber, account);
+        System.out.println("Account created successfully.");
+    }
+
+    private static void performTransaction(Scanner scanner, String transactionType) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        
+        if (accounts.containsKey(accountNumber)) {
+            BankAccount account = accounts.get(accountNumber);
+            
+            System.out.print("Enter amount: ");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
+            
+            if ("deposit".equals(transactionType)) {
+                account.deposit(amount);
+            } else if ("withdraw".equals(transactionType)) {
+                account.withdraw(amount);
+            }
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+    private static void checkBalance(Scanner scanner) {
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+        
+        if (accounts.containsKey(accountNumber)) {
+            BankAccount account = accounts.get(accountNumber);
+            account.checkBalance();
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+}
+
+class BankAccount {
+    
+    private String passwordHash; 
+
+    public BankAccount(String accountNumber, String accountHolder, String password) {
+        this.accountNumber = accountNumber;
+        this.accountHolder = accountHolder;
+        this.balance = 0.0;
+        this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    public boolean authenticate(String password) {
+        return BCrypt.checkpw(password, passwordHash);
+    }
+
+}
+
+public class BankingApplication {
+    
+    private static void createAccount(Scanner scanner) {
+        
+        System.out.print("Enter a password: ");
+        String password = scanner.nextLine();
+        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+        BankAccount account = new BankAccount(accountNumber, accountHolder, passwordHash);
+    }
+
+    private static void performTransaction(Scanner scanner, String transactionType) {
+        
+        if (accounts.containsKey(accountNumber)) {
+            BankAccount account = accounts.get(accountNumber);
+            
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+            
+            if (account.authenticate(password)) {
+            } else {
+                System.out.println("Authentication failed.");
+            }
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+
+}
